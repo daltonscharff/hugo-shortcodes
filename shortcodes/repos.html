@@ -1,0 +1,30 @@
+{{/* 
+    Usage: {{< repos user="daltonscharff" >}} 
+*/}}
+
+{{ $user := .Get "user"}}
+
+{{ $pinnedreposurl := print "https://gh-pinned-repos-5l2i19um3.vercel.app/?username=" $user }}
+{{ $pinnedrepos := getJSON $pinnedreposurl }}
+{{ $pinnedreponames := slice "" }}
+
+{{ range $pinnedrepos }}
+{{ $pinnedreponames = $pinnedreponames | append .repo }}
+{{ end }}
+
+{{ $allreposurl := print "https://api.github.com/users/" $user "/repos" }}
+{{ $allrepos := getJSON $allreposurl }}
+
+{{ range $allrepos }}
+{{ $figureclasses := slice "repository"}}
+{{ if in $pinnedreponames .name }}
+{{ $figureclasses = $figureclasses | append "pinned"}}
+{{ end }}
+<figure class='{{ delimit $figureclasses " " }}'>
+    <a href="{{ .html_url }}">
+        <h1>{{ .name }}</h1>
+    </a>
+    <h2>{{ .language }}</h2>
+    <p>{{ .description }}</p>
+</figure>
+{{ end }}

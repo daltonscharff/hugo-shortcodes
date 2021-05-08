@@ -1,0 +1,19 @@
+{{/*
+    Usage: {{< podcast feed="https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/796f42bb-282c-4ba4-a0c6-a9ea0129cafa/fa8e724d-0571-49bb-841b-a9ea0129cb03/podcast.rss" >}}
+*/}}
+
+{{ $feed := .Get "feed" }}
+{{ $url := print "https://api.factmaven.com/xml-to-json/?xml=" $feed }}
+{{ $podcast := getJSON $url }}
+
+{{ with $podcast }}
+{{ $map := index .rss.channel.image 0 }}
+{{ $img := index $map "href" }}
+<figure>
+    <img src="{{ $img }}">
+    <figcaption>
+        <h1>{{ .rss.channel.title }}</h1>
+        <p>{{ .rss.channel.summary}}</p>
+    </figcaption>
+</figure>
+{{ end }}
